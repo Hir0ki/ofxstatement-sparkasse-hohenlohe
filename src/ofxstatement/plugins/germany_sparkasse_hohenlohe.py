@@ -11,13 +11,13 @@ from ofxstatement.statement import (
     )
 
 
-class SparkasseFreiburgPlugin(Plugin):
+class SparkasseHohenlohePlugin(Plugin):
     """
     Plugin for German bank Sparkasse Freiburg
     """
 
     def get_parser(self, filename):
-        return SparkasseFreiburgParser(
+        return SparkasseHohenloheParser(
             filename,
             self.settings.get('encoding', 'cp1252'),
             self.settings.get('account', ''),
@@ -30,7 +30,7 @@ def _truncate_str(s):
     return s[:46] + '...' if len(s) > 49 else s
 
 
-class SparkasseFreiburgParser(StatementParser):
+class SparkasseHohenloheParser(StatementParser):
     """
     Parses CSV files as downloaded from the Sparkasse's homepage. Following
     columns are expected:
@@ -40,15 +40,9 @@ class SparkasseFreiburgParser(StatementParser):
         "Valutadatum"
         "Buchungstext"
         "Verwendungszweck"
-        "Glaeubiger ID"
-        "Mandatsreferenz"
-        "Kundenreferenz (End-to-End)"
-        "Sammlerreferenz"
-        "Lastschrift Ursprungsbetrag"
-        "Auslagenersatz Ruecklastschrift"
         "Beguenstigter/Zahlungspflichtiger"
-        "Kontonummer/IBAN"
-        "BIC (SWIFT-Code)"
+        "Kontonummer"
+        "BLZ"
         "Betrag"
         "Waehrung"
         "Info"
@@ -60,7 +54,7 @@ class SparkasseFreiburgParser(StatementParser):
     def __init__(self, file_name, file_encoding, account_id):
         self.statement = Statement(
             currency='EUR',
-            bank_id='FRSPDE66XXX',  # BIC Sparkasse Freiburg
+            bank_id='SOLADESKUN1',  # BIC Sparkasse Hohenlohe 
             account_id=account_id,
             )
         self.file_name = file_name
@@ -117,15 +111,16 @@ class SparkasseFreiburgParser(StatementParser):
         recipient = _truncate_str(line['Beguenstigter/Zahlungspflichtiger'])
         if not recipient:
             recipient = 'UNBEKANNT'
-        sl.payee = "{}; {}".format(
-            _truncate_str(line['Verwendungszweck']),
+        sl.payee = "{}; Kontonummer: {}; BLZ: {}".format(
             recipient,
-            )
-        sl.memo = "{}; IBAN: {}; BIC: {}".format(
-            line['Buchungstext'].strip(),
             line['Kontonummer/IBAN'].strip(),
             line['BIC (SWIFT-Code)'].strip(),
             )
+        sl.memo = "Verwendungszweck: {}, Buchungstext: {}".format(
+                _truncate_str(line['Verwendungszweck']),
+                line['Buchungstext'].strip()
+            )
+
 
         m = sha256()
         m.update(str(sl.date).encode('utf-8'))

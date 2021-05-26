@@ -9,11 +9,11 @@ version = "0.0.3"
 with open('README.md') as f:
     long_description = f.read()
 
-setup(name='ofxstatement-sparkasse-freiburg',
+setup(name='ofxstatement-sparkasse-hohenlohe',
       version=version,
       author="Omar Kohl",
       author_email="omarkohl@gmail.com",
-      url="https://github.com/omarkohl/ofxstatement-sparkasse-freiburg",
+      url="https://github.com/Hir0ki/ofxstatement-sparkasse-hohenlohe",
       description=("ofxstatement plugin for German bank Sparkasse Freiburg-Nördlicher Breisgau"),
       long_description=long_description,
       long_description_content_type='text/markdown',
@@ -34,7 +34,7 @@ setup(name='ofxstatement-sparkasse-freiburg',
       namespace_packages=["ofxstatement", "ofxstatement.plugins"],
       entry_points={
           'ofxstatement':
-          ['germany_sparkasse_freiburg = ofxstatement.plugins.germany_sparkasse_freiburg:SparkasseFreiburgPlugin']
+          ['germany_sparkasse_hohenlohe = ofxstatement.plugins.germany_sparkasse_hohenlohe:SparkasseHohenlohePlugin']
           },
       install_requires=['ofxstatement'],
       include_package_data=True,
